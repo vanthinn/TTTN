@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
 
 const schema = yup.object().shape({
  fullName: yup.string().required('This is required'),
@@ -30,7 +31,29 @@ const SignUp: FC<Props> = (): JSX.Element => {
  } = useForm({
   resolver: yupResolver(schema), // Use yupResolver here
  })
- const onSubmit = (data: any) => console.log(data)
+ const onSubmit = async (data: any) => {
+  // const user = {
+  //  email: data.email,
+  //  pw: data.password,
+  //  fullname: data.fullName,
+  //  role: 'user',
+  // }
+  console.log(data)
+
+  try {
+   const res = await axios.get(
+    'https://egret-quiet-orca.ngrok-free.app/users/',
+    {
+     headers: {
+      'ngrok-skip-browser-warning': 'true',
+     },
+    },
+   )
+   console.log(res)
+  } catch (err) {
+   console.log(err)
+  }
+ }
  return (
   <div className="min-h-screen relative w-full bg-gradient-to-b from-[#4467E4] via-[#8CA2EF]/80 to-[#D8DFF7]">
    <div
