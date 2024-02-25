@@ -4,6 +4,8 @@ import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
+import { toastMessage } from '../../utils/toastMessage'
 
 const schema = yup.object().shape({
  email: yup
@@ -23,9 +25,33 @@ const Login: FC<Props> = (): JSX.Element => {
   handleSubmit,
   formState: { errors },
  } = useForm({
-  resolver: yupResolver(schema), // Use yupResolver here
+  resolver: yupResolver(schema),
  })
- const onSubmit = (data: any) => console.log(data)
+ const onSubmit = async (data: any) => {
+  const user = {
+   email: data.email,
+   pw: data.password,
+  }
+
+  try {
+   const res = await axios.post(
+    'https://egret-quiet-orca.ngrok-free.app/api/v1/users/login',
+    { ...user },
+    {
+     headers: {
+      'ngrok-skip-browser-warning': 'true',
+     },
+    },
+   )
+   if (res) {
+    localStorage.setItem('auth', JSON.stringify({ token: res.data }))
+    navigate('/')
+    toastMessage('Login Successfully', 'success')
+   }
+  } catch (err: any) {
+   toastMessage(String(err?.response?.data.message || err?.message), 'error')
+  }
+ }
  return (
   <div className="min-h-screen relative w-full bg-gradient-to-b from-[#4467E4] via-[#8CA2EF]/80 to-[#D8DFF7]">
    <div
