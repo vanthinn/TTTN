@@ -1,31 +1,18 @@
-import axios from 'axios'
-import { FC, useEffect, useState } from 'react'
+import { FC, useState } from 'react'
+import { useAuthContext } from '../../contexts/authContext'
+import { IUser } from '../../interfaces/user'
 
 interface Props {}
 
 const Profile: FC<Props> = (): JSX.Element => {
+ const { user } = useAuthContext()
  const [isEdit, setIsEdit] = useState<boolean>(false)
- //  const callApi = async (): Promise<void> => {
- //   try {
- //    const res = await axios.get(
- //     'https://egret-quiet-orca.ngrok-free.app/api/v1/users/profile',
- //     {
- //      headers: {
- //       'ngrok-skip-browser-warning': 'true',
- //       token: `oyx0fFoykYnRnfLDozvysNIG7sHML9Iy`,
- //      },
- //     },
- //    )
- //    if (res) {
- //    }
- //   } catch (err) {
- //    console.log(err)
- //   }
- //  }
+ const [data, setData] = useState<IUser>()
 
- //  useEffect(() => {
- //   callApi()
- //  }, [])
+ const handleEdit = () => {
+  console.log(data)
+ }
+
  return (
   <div className="p-4 bp-4  border border-gray-300 rounded-xl flex flex-col">
    <h4 className="text-2xl font-semibold text-[#19245D] mb-4">
@@ -43,12 +30,14 @@ const Profile: FC<Props> = (): JSX.Element => {
      <div className="col-span-9">
       <input
        className="border border-gray-400 outline-none px-2 py-0.5 rounded-md"
-       placeholder="Nguyễn Văn Thịnh"
+       placeholder={user?.fullname || ''}
+       value={data?.fullname}
+       onChange={(e) => setData({ ...data, fullname: e.target.value || '' })}
        type="text"
       />
      </div>
     ) : (
-     <span className="col-span-9 text-xl">Nguyễn Văn Thịnh</span>
+     <span className="col-span-9 text-xl">{user?.fullname}</span>
     )}
    </div>
 
@@ -58,7 +47,7 @@ const Profile: FC<Props> = (): JSX.Element => {
      htmlFor="">
      Email
     </label>
-    <span className="col-span-9 text-xl">thinh209202@gmail.com</span>
+    <span className="col-span-9 text-xl">{user?.email}</span>
    </div>
 
    <div className="grid grid-cols-12 items-center py-2.5 border-b border-gray-300 px-4">
@@ -72,12 +61,13 @@ const Profile: FC<Props> = (): JSX.Element => {
      <div className="col-span-9">
       <input
        className="border border-gray-400 outline-none px-2 py-0.5 rounded-md"
-       placeholder="0923836659"
+       placeholder={user?.sdt || ''}
+       onChange={(e) => setData({ ...data, sdt: e.target.value || '' })}
        type="text"
       />
      </div>
     ) : (
-     <span className="col-span-9 text-xl">0923836659</span>
+     <span className="col-span-9 text-xl">{user?.sdt || 'Chưa có'}</span>
     )}
    </div>
 
@@ -89,9 +79,22 @@ const Profile: FC<Props> = (): JSX.Element => {
     </label>
     {isEdit ? (
      <div className="col-span-9 flex items-center gap-2">
-      <input type="radio" id="Nam" name="GT" value="Nam" />
+      <input
+       type="radio"
+       id="Nam"
+       name="GT"
+       value="Nam"
+       onChange={(e) => setData({ ...data, gender: e.target.value || '' })}
+      />
       <label>Nam</label>
-      <input className="ml-4" type="radio" id="Nu" name="GT" value="Nu" />
+      <input
+       className="ml-4"
+       type="radio"
+       id="Nu"
+       name="GT"
+       value="Nu"
+       onChange={(e) => setData({ ...data, gender: e.target.value || '' })}
+      />
       <label>Nữ</label>
      </div>
     ) : (
@@ -110,11 +113,13 @@ const Profile: FC<Props> = (): JSX.Element => {
       <input
        className="border border-gray-400 outline-none px-2 py-0.5 rounded-md w-52"
        placeholder="0923836659"
+       value={data?.dob}
+       onChange={(e) => setData({ ...data, dob: e.target.value || '' })}
        type="date"
       />
      </div>
     ) : (
-     <span className="col-span-9 text-xl">12/03/2002</span>
+     <span className="col-span-9 text-xl">{user?.dob || 'Chưa có'}</span>
     )}
    </div>
 
@@ -128,12 +133,14 @@ const Profile: FC<Props> = (): JSX.Element => {
      <div className="col-span-9">
       <input
        className="border border-gray-400 outline-none px-2 py-0.5 rounded-md w-96"
-       placeholder="0923836659"
+       placeholder={user?.address || ''}
        type="text"
+       value={data?.address}
+       onChange={(e) => setData({ ...data, address: e.target.value || '' })}
       />
      </div>
     ) : (
-     <span className="col-span-9 text-xl">127 Nguyễn Lương Bằng, Đà Nẵng</span>
+     <span className="col-span-9 text-xl">{user?.address || 'Chưa có'}</span>
     )}
    </div>
 
@@ -144,7 +151,13 @@ const Profile: FC<Props> = (): JSX.Element => {
        <span onClick={() => setIsEdit(false)}>Hủy</span>
       </button>
       <button className=" px-4 py-1.5 rounded-md bg-green-600 text-white  flex gap-1 items-center hover:bg-blue-400 transition-all duration-200">
-       <span onClick={() => setIsEdit(false)}>Lưu</span>
+       <span
+        onClick={() => {
+         handleEdit()
+         setIsEdit(false)
+        }}>
+        Lưu
+       </span>
       </button>
      </div>
     ) : (

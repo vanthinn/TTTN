@@ -4,7 +4,8 @@ import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import { signUp } from '../../services/auth.service'
+import { toastMessage } from '../../utils/toastMessage'
 
 const schema = yup.object().shape({
  fullName: yup.string().required('This is required'),
@@ -32,26 +33,26 @@ const SignUp: FC<Props> = (): JSX.Element => {
   resolver: yupResolver(schema), // Use yupResolver here
  })
  const onSubmit = async (data: any) => {
-  // const user = {
-  //  email: data.email,
-  //  pw: data.password,
-  //  fullname: data.fullName,
-  //  role: 'user',
-  // }
-  console.log(data)
+  const user = {
+   email: data.email,
+   pw: data.password,
+   fullname: data.fullName,
+   role: 'user',
+  }
 
-  try {
-   const res = await axios.get(
-    'https://egret-quiet-orca.ngrok-free.app/users/',
-    {
-     headers: {
-      'ngrok-skip-browser-warning': 'true',
-     },
-    },
-   )
-   console.log(res)
-  } catch (err) {
-   console.log(err)
+  const res = await signUp(user)
+  if (res?.status === 201) {
+   localStorage.setItem('auth', JSON.stringify({ token: res.data }))
+   navigate('/')
+   toastMessage('Sign up Successfully', 'success')
+  }
+
+  if (res?.status === 400) {
+   toastMessage(`${res?.message}`, 'error')
+  }
+
+  if (res?.status === 404) {
+   toastMessage(`${res?.message}`, 'error')
   }
  }
  return (

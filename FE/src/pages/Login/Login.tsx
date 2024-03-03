@@ -4,8 +4,9 @@ import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
 import { toastMessage } from '../../utils/toastMessage'
+import { login } from '../../services/auth.service'
+import { useAuthContext } from '../../contexts/authContext'
 
 const schema = yup.object().shape({
  email: yup
@@ -19,6 +20,7 @@ const schema = yup.object().shape({
 interface Props {}
 
 const Login: FC<Props> = (): JSX.Element => {
+ const { setToken } = useAuthContext()
  const navigate = useNavigate()
  const {
   register,
@@ -33,23 +35,16 @@ const Login: FC<Props> = (): JSX.Element => {
    pw: data.password,
   }
 
-  try {
-   const res = await axios.post(
-    'https://egret-quiet-orca.ngrok-free.app/api/v1/users/login',
-    { ...user },
-    {
-     headers: {
-      'ngrok-skip-browser-warning': 'true',
-     },
-    },
-   )
-   if (res) {
-    localStorage.setItem('auth', JSON.stringify({ token: res.data }))
-    navigate('/')
-    toastMessage('Login Successfully', 'success')
-   }
-  } catch (err: any) {
-   toastMessage(String(err?.response?.data.message || err?.message), 'error')
+  const res = await login(user)
+  if (res?.status === 200) {
+   localStorage.setItem('auth', JSON.stringify({ token: res.data }))
+   setToken(res.data)
+   navigate('/')
+   toastMessage('Login Successfully', 'success')
+  }
+
+  if (res?.status === 404) {
+   toastMessage(`${res?.message}`, 'error')
   }
  }
  return (
