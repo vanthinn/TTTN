@@ -10,6 +10,24 @@ const getProfile = async () => {
     }
 }
 
+const updateProfile = async (data: any) => {
+    try {
+        const res = await BaseURL.patch('users/profile', { ...data });
+        return res.data
+    } catch (error: any) {
+        toastMessage(String(error?.response?.data.message || error?.message), 'error')
+    }
+}
+
+const getHistory = async () => {
+    try {
+        const res = await BaseURL.get('history');
+        return res.data
+    } catch (error: any) {
+        toastMessage(String(error?.response?.data.message || error?.message), 'error')
+    }
+}
 
 
-export { getProfile }
+
+export { getProfile, updateProfile, getHistory }

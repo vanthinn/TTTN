@@ -14,6 +14,7 @@ interface Props {}
 const Header: FC<Props> = (): JSX.Element => {
  const navigate = useNavigate()
  const auth = JSON.parse(String(localStorage.getItem('auth')))
+
  return (
   <div className=" h-20 bg-[#e3e5ff] px-20 flex justify-between items-center fixed top-0 right-0 left-0 z-50  shadow-md">
    <div className="flex items-center">

@@ -19,4 +19,13 @@ const signUp = async (data: any) => {
     }
 }
 
-export { login, signUp }
+const changePassword = async (data: any) => {
+    try {
+        const res = await BaseURL.patch('users/changepw', data);
+        return res.data
+    } catch (error: any) {
+        toastMessage(String(error?.response?.data.message || error?.message), 'error')
+    }
+}
+
+export { login, signUp, changePassword }

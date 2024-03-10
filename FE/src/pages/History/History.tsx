@@ -1,10 +1,20 @@
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import test from '../../assets/images/test.jpg'
 import { HiOutlineStar } from 'react-icons/hi'
+import { getHistory } from '../../services/user.service'
 
 interface Props {}
 
 const History: FC<Props> = (): JSX.Element => {
+ const getHistoryPage = async (): Promise<void> => {
+  const res = await getHistory()
+  if (res.status === 201) {
+   console.log(res)
+  }
+ }
+ useEffect(() => {
+  getHistoryPage()
+ }, [])
  return (
   <div className="p-6  border border-gray-300 rounded-xl flex flex-col">
    <h4 className="text-2xl font-semibold text-[#19245D] mb-4">Lịch sử xem</h4>

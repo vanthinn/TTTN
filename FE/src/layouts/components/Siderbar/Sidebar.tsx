@@ -1,5 +1,5 @@
 import { FC, useState } from 'react'
-import avatar from '../../../assets/images/test1.png'
+import avatar from '../../../assets/images/user.png'
 import { useNavigate } from 'react-router-dom'
 import { useAuthContext } from '../../../contexts/authContext'
 
@@ -24,8 +24,9 @@ const listNav = [
 
 const Sidebar: FC<Props> = (): JSX.Element => {
  const navigate = useNavigate()
- const { user } = useAuthContext()
+ const { user, setToken } = useAuthContext()
  const [pick, setPick] = useState(1)
+
  const ChangeNavigate = (path: string) => {
   if (path === 'profile') {
    setPick(1)
@@ -39,6 +40,8 @@ const Sidebar: FC<Props> = (): JSX.Element => {
    return
   }
 
+  localStorage.removeItem('auth')
+  setToken('')
   navigate('/')
  }
 

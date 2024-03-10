@@ -1,16 +1,20 @@
 import { FC, useState } from 'react'
 import { useAuthContext } from '../../contexts/authContext'
 import { IUser } from '../../interfaces/user'
+import { updateProfile } from '../../services/user.service'
 
 interface Props {}
 
 const Profile: FC<Props> = (): JSX.Element => {
- const { user } = useAuthContext()
+ const { user, setUser } = useAuthContext()
  const [isEdit, setIsEdit] = useState<boolean>(false)
  const [data, setData] = useState<IUser>()
 
- const handleEdit = () => {
-  console.log(data)
+ const handleEdit = async () => {
+  const res = await updateProfile(data)
+  if (res.status === 205) {
+   setUser({ ...user, ...data })
+  }
  }
 
  return (
